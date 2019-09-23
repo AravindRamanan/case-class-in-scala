@@ -1,5 +1,16 @@
 CASE CLASSES ARE USED TO INFER SCHEMA
  
+INPUT FILE FORMAT:
+
+Here first column has a fixed width of 9 characters (if the value is less than 9, then the column is right padded with x)
+second column => 6 chars
+third column => 4 chars
+
+BarackxxObamax53xx
+GeorgexxBushxx68xx
+BillxxxxClinto68xx
+ 
+ 
 step 1: Defining case class
  
 scala> case class Person (first_name:String,last_name: String,age:String)
