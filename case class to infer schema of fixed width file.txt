@@ -1,0 +1,61 @@
+CASE CLASSES ARE USED TO INFER SCHEMA
+ 
+step 1: Defining case class
+ 
+scala> case class Person (first_name:String,last_name: String,age:String)
+defined class Person
+ 
+step 2: reading the file as rdd
+ 
+scala> val p = sc.textFile ("file:/home/ramanana/spark/personn.txt")
+p: org.apache.spark.rdd.RDD[String] = file:/home/ramanana/spark/personn.txt MapPartitionsRDD[1] at textFile at <console>:24
+ 
+step 3: converting the text into structured format using case class (The text file that i have used doesn't have any delimiter and it is a file having columns with fixed width)
+ 
+scala> val personRDD = p.map ( p => Person (p.toString.substring(0,8), p.toString.substring(9,15), p.toString.substring(16,20)))
+personRDD: org.apache.spark.rdd.RDD[Person] = MapPartitionsRDD[2] at map at <console>:27
+ 
+step 4: checking
+ 
+scala> personRDD.collect().foreach(println)
+Person(Barackxx,Obamax,53xx)
+Person(Georgexx,Bushxx,68xx)
+Person(Billxxxx,Clinto,68xx)
+ 
+step 5: converting to df
+ 
+scala> val kk = personRDD.toDF()
+kk: org.apache.spark.sql.DataFrame = [first_name: string, last_name: string ... 1 more field]
+ 
+scala> kk.show()
++----------+---------+----+
+|first_name|last_name| age|
++----------+---------+----+
+|  Barackxx|   Obamax|53xx|
+|  Georgexx|   Bushxx|68xx|
+|  Billxxxx|   Clinto|68xx|
++----------+---------+----+
+ 
+sample queries on DF:
+ 
+SAMPLE QUERY 1:
+ 
+scala> kk.select($"first_name",$"last_name",$"age").show()
++----------+---------+----+
+|first_name|last_name| age|
++----------+---------+----+
+|  Barackxx|   Obamax|53xx|
+|  Georgexx|   Bushxx|68xx|
+|  Billxxxx|   Clinto|68xx|
++----------+---------+----+
+ 
+SAMPLE QUERY 2:
+ 
+scala> kk.select(regexp_replace($"first_name","x",""),regexp_replace($"last_name","x",""),regexp_replace($"age","x","")).show()
++-------------------------------+------------------------------+------------------------+
+|regexp_replace(first_name, x, )|regexp_replace(last_name, x, )|regexp_replace(age, x, )|
++-------------------------------+------------------------------+------------------------+
+|                         Barack|                         Obama|                      53|
+|                         George|                          Bush|                      68|
+|                           Bill|                        Clinto|                      68|
++-------------------------------+------------------------------+------------------------+
