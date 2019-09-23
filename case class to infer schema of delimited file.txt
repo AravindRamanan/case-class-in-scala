@@ -1,5 +1,11 @@
 CASE CLASSES ARE USED TO INFER SCHEMA
  
+INPUT FILE FORMAT:
+
+Barack,Obama,53
+George,Bush,68
+Bill,Clinton,68 
+ 
 STEP 1: READING THE FILE FROM LOCAL AS AN RDD
  
 scala> val a = sc.textFile("file:///home/ramanana/spark/person.txt")
